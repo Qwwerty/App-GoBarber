@@ -59,7 +59,7 @@ const Input: React.ForwardRefRenderFunction<InputRef, InputProps> = ({ name, ico
   }, []);
 
   return (
-    <Container isFocused={isfocused}>
+    <Container isFocused={isfocused} isErrored={!!error}>
       <Icon name={icon} size={20} color={isfocused || isFilled ? '#ff9000' : '#666360' } />
 
       <TextInput
