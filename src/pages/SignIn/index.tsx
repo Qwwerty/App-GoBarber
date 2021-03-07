@@ -1,6 +1,10 @@
-import React from 'react';
-import { Image, ScrollView } from 'react-native';
+import React, { useCallback, useRef } from 'react';
+import { Image, ScrollView, TextInput } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
+import { useNavigation } from '@react-navigation/native';
+
+import { Form } from '@unform/mobile';
+import { FormHandles } from '@unform/core';
 
 import Input from '../../components/Input';
 import Button from '../../components/Button';
@@ -17,18 +21,56 @@ import {
 } from './styles';
 
 const SignIn: React.FC = () => {
+  const navigation = useNavigation();
+
+  const formRef = useRef<FormHandles>(null);
+  const passwordInputRef = useRef<TextInput>(null);
+
+  const handleSignIn = useCallback((data: object) => {
+    console.log(data);
+  }, []);
+
   return (
     <>
-      <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ flex: 1 }}>
+      <ScrollView
+        keyboardShouldPersistTaps="handled"
+        contentContainerStyle={{ flex: 1 }}
+      >
         <Container>
           <Image source={logoImg} />
 
           <Title>Faça seu logon</Title>
+          <Form  ref={formRef} onSubmit={handleSignIn}>
 
-          <Input name="email" icon="mail" placeholder="E-mail" />
-          <Input name="password" icon="lock" placeholder="Senha" />
+            <Input
+              autoCorrect={false}
+              autoCapitalize="none"
+              keyboardType="email-address"
+              name="email"
+              icon="mail"
+              placeholder="E-mail"
+              returnKeyType="next"
+              onSubmitEditing={() => {
+                passwordInputRef.current?.focus();
+              }}
+            />
 
-          <Button onPress={() => {}}>Entrar</Button>
+            <Input
+              ref={passwordInputRef}
+              name="password"
+              icon="lock"
+              placeholder="Senha"
+              secureTextEntry
+              returnKeyType="send"
+              onSubmitEditing={() => {
+                formRef.current?.submitForm();
+              }}
+            />
+
+          </Form>
+          <Button onPress={() => {
+            formRef.current?.submitForm();
+          }}>Entrar</Button>
 
           <FogoutPassword onPress={() => {}}>
             <ForgoutPasswordText>Esqueci minha senha</ForgoutPasswordText>
@@ -36,7 +78,7 @@ const SignIn: React.FC = () => {
         </Container>
       </ScrollView>
 
-      <CreateAccountButton onPress={() => {}}>
+      <CreateAccountButton onPress={() => navigation.navigate('SignUp')}>
         <Icon name="log-in" size={20} color="#ff9000" />
 
         <CreateAccountButtonText>Criar uma conta</CreateAccountButtonText>
